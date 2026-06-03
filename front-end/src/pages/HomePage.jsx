@@ -1,19 +1,30 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import MovieCard from "../components/MovieCard"
 import "../css/HomePage.css"
+import { getFeaturedMovies, searchMovies } from "../services/api"
 
 function HomePage() {
     const [searchQuery, setSearchQuery] = useState("")
+    const [movies, setMovies] = useState([])
+    const [loading, setLoading] = useState(true)
 
-    const movies = [
-        { id: 1, title: "Iron Man", release_date: 2008 },
-        { id: 2, title: "Interstellar", release_date: 2014 },
-        { id: 3, title: "Bahubali 2", release_date: 2017 }
-    ]
+    useEffect(() => {
+        async function loadFeatured() {
+            const data = await getFeaturedMovies()
+            setMovies(data)
+            setLoading(false)
+        }
+        loadFeatured()
+    }, [])
 
-    const handleSearch = (e) => {
+
+    const handleSearch = async (e) => {
         e.preventDefault()
-        alert(searchQuery)
+        if (searchQuery.trim() === "") return
+        setLoading(true)
+        const results = await searchMovies(searchQuery)
+        setMovies(results)
+        setLoading(false)
         setSearchQuery("")
     }
 
@@ -30,12 +41,20 @@ function HomePage() {
                 <button type="submit" className="search-btn">Search</button>
             </form>
 
-            <div className="movie-grid">
-                {movies.map(
-                    movie =>
-                        <MovieCard movie={movie} key={movie.id} />
-                )}
-            </div>
+            {loading ? (
+                <p className="loading">Loading...</p>
+            ) : movies.length === 0 ? (
+                <div className="no-movies">
+                    <h2>No Movies Found!</h2>
+                    <p>Please enter a valid name or type the full word</p>
+                </div>
+            ) : (
+                <div className="movie-grid">
+                    {movies.map(movie =>
+                        <MovieCard movie={movie} key={movie.imdbID} />
+                    )}
+                </div>
+            )}
         </div>
     )
 }
