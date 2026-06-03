@@ -10,7 +10,7 @@ Built in one day as part of learning React.
 
 - Search any movie via OMDB API
 - ee IMDB ratings on every card
-- Save favorites — persists on refresh via localStorage
+- Save favorites, persists on refresh via localStorage
 - Featured picks on home screen (curated by me)
 
 ---
