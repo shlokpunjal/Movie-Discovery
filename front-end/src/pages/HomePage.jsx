@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import MovieCard from "../components/MovieCard"
 import "../css/HomePage.css"
 import { getFeaturedMovies, searchMovies } from "../services/api"
+import { useLocation } from "react-router-dom"
 
 function HomePage() {
     const [searchQuery, setSearchQuery] = useState("")
@@ -9,14 +10,27 @@ function HomePage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-    async function loadFeatured() {
+        async function loadFeatured() {
+            setLoading(true)
+            const data = await getFeaturedMovies()
+            setMovies(data)
+            setLoading(false)
+        }
+        loadFeatured()
+    }, [])
+
+    // detect when we navigate back to home
+    const location = useLocation()
+
+    useEffect(() => {
+        setSearchQuery("")
+        setMovies([])
         setLoading(true)
-        const data = await getFeaturedMovies()
-        setMovies(data)
-        setLoading(false)
-    }
-    loadFeatured()
-}, [])  
+        getFeaturedMovies().then(data => {
+            setMovies(data)
+            setLoading(false)
+        })
+    }, [location])
 
     const handleSearch = async (e) => {
         e.preventDefault()
