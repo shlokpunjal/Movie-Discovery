@@ -9,14 +9,14 @@ function HomePage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        async function loadFeatured() {
-            const data = await getFeaturedMovies()
-            setMovies(data)
-            setLoading(false)
-        }
-        loadFeatured()
-    }, [])
-
+    async function loadFeatured() {
+        setLoading(true)
+        const data = await getFeaturedMovies()
+        setMovies(data)
+        setLoading(false)
+    }
+    loadFeatured()
+}, [])  
 
     const handleSearch = async (e) => {
         e.preventDefault()
@@ -25,7 +25,6 @@ function HomePage() {
         const results = await searchMovies(searchQuery)
         setMovies(results)
         setLoading(false)
-        setSearchQuery("")
     }
 
     return (
